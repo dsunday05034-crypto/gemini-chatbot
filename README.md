@@ -1,4 +1,3 @@
-```markdown
 # Terminal Gemini Chatbot
 
 A lightweight, interactive command-line interface chatbot built with Python and the official Google GenAI SDK (`google-genai`). It features color-coded terminal outputs, a multi-threaded "Thinking..." spinner animation, and robust error handling with automatic rate-limit (429) and server-demand (503) retries.
@@ -19,20 +18,15 @@ A lightweight, interactive command-line interface chatbot built with Python and 
 
 ### 1. Clone the Repository
 Open your terminal and clone your repository from GitHub, then navigate into the project directory:
-```bash
+
 git clone https://github.com/dsunday05034-crypto/gemini-chatbot.git
 cd the-repo-name
-
-```
 
 ### 2. Install Dependencies
 
 Install the required Python packages using `pip`:
 
-```bash
 pip install google-genai python-dotenv
-
-```
 
 ## Getting a Gemini API Key
 
@@ -47,31 +41,17 @@ To run this chatbot, you need a free or paid API key from Google AI Studio:
 ## Configuration
 
 1. Create a file named `.env` in the root directory of your project folder:
-```bash
+
 touch .env
 
-```
-
-
 2. Open the `.env` file in your code editor and add your API key using this exact format:
-```env
+
 GEMINI_API_KEY=your_actual_api_key_here
-
-```
-
-
 
 ## Running the Program
 
 Execute the script from your terminal:
 
-```bash
 python main.py
 
-```
-
 Once running, type your message next to the green `You:` prompt and press **Enter**. To quit the chat session at any time, type `exit` or press `Ctrl + C`.
-
-```
-
-```
