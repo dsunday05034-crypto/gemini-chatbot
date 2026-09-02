@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 import threading
@@ -17,10 +16,10 @@ CYAN = "\033[36m"
 YELLOW = "\033[33m"
 RED = "\033[31m"
 
-def thinking_animation(stop_event):
+def thinking_animation(stop_animation):
     chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
     i = 0
-    while not stop_event.is_set():
+    while not stop_animation.is_set():
         sys.stdout.write(f"\r{YELLOW}Thinking... {chars[i]}{RESET}")
         sys.stdout.flush()
         i = (i + 1) % len(chars)
@@ -42,8 +41,8 @@ while True:
     if question.lower() == "exit":
         break
 
-    stop_event = threading.Event()
-    spinner_thread = threading.Thread(target=thinking_animation, args=(stop_event,))
+    stop_animation = threading.Event()
+    spinner_thread = threading.Thread(target=thinking_animation, args=(stop_animation,))
     spinner_thread.start()
 
     max_retries = 3
@@ -61,41 +60,41 @@ while True:
                 match = re.search(r"Please retry in ([0-9.]+)s", error_str)
                 wait_time = float(match.group(1)) if match else 21.0
                 
-                stop_event.set()
+                stop_animation.set()
                 spinner_thread.join()
                 
                 print(f"\n{YELLOW}Rate limit hit. Sleeping for {wait_time:.1f}s (Attempt {attempt+1}/{max_retries})...{RESET}")
                 time.sleep(wait_time)
                 
-                stop_event = threading.Event()
-                spinner_thread = threading.Thread(target=thinking_animation, args=(stop_event,))
+                stop_animation = threading.Event()
+                spinner_thread = threading.Thread(target=thinking_animation, args=(stop_animation,))
                 spinner_thread.start()
                 
             # Handle Server Overload / High Demand (503)
             elif "503" in error_str or "UNAVAILABLE" in error_str:
                 wait_time = 5.0 * (attempt + 1) # Exponential backoff: 5s, 10s, 15s
                 
-                stop_event.set()
+                stop_animation.set()
                 spinner_thread.join()
                 
                 print(f"\n{YELLOW}Model busy (503 High Demand). Retrying in {wait_time}s (Attempt {attempt+1}/{max_retries})...{RESET}")
                 time.sleep(wait_time)
                 
-                stop_event = threading.Event()
-                spinner_thread = threading.Thread(target=thinking_animation, args=(stop_event,))
+                stop_animation = threading.Event()
+                spinner_thread = threading.Thread(target=thinking_animation, args=(stop_animation,))
                 spinner_thread.start()
             else:
-                stop_event.set()
+                stop_animation.set()
                 spinner_thread.join()
                 print(f"\n{RED}Gemini: Error: {e}{RESET}")
                 break
     else:
-        stop_event.set()
+        stop_animation.set()
         spinner_thread.join()
         print(f"\n{RED}Gemini: Error: Maximum connection retries exceeded.{RESET}")
         continue
 
     if response:
-        stop_event.set()
+        stop_animation.set()
         spinner_thread.join()
         print(f"{CYAN}Gemini:{RESET} {response.text}")
